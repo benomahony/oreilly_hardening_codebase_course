@@ -1,0 +1,95 @@
+[project]
+name = "oreilly-hardening-codebase-course"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "benomahony", email = "bomarni@googlemail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.13.4",
+    "rich>=15.0.0",
+    "typer>=0.27.1",
+]
+
+[project.scripts]
+chatops = "oreilly_hardening_codebase_course.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.11.2,<0.12.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "bandit>=1.9.4",
+    "basedpyright>=1.39.9",
+    "cliqa>=0.1.5",
+    "deptry>=0.25.1",
+    "hypothesis>=6.165.5",
+    "mockbuster>=0.1.4",
+    "nasa-lsp>=0.1.11",
+    "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-examples>=0.0.18",
+    "ruff>=0.16.3",
+    "vulture>=2.16",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "unit: fast, isolated tests with no I/O",
+    "integration: tests that exercise multiple components together",
+    "architecture: AST-based tests enforcing layer boundaries",
+    "property: Hypothesis property-based / fuzz tests",
+    "doc: pytest-examples tests validating documentation code blocks",
+]
+addopts = "--strict-markers"
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "C4"]
+
+[tool.basedpyright]
+include = ["src", "tests"]
+typeCheckingMode = "standard"
+
+[tool.vulture]
+paths = ["src"]
+min_confidence = 80
+
+[tool.deptry]
+exclude = [".venv", "tests"]
+known_first_party = ["oreilly_hardening_codebase_course"]
+
+[tool.deptry.per_rule_ignores]
+DEP002 = ["cliqa", "mockbuster"]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]
+# B101 (assert used) is expected everywhere: technique 4 in the hardening
+# post is deliberately >=2 assertions per function as a development-time
+# invariant check, not a substitute for production input validation
+# (which is Pydantic's job, at the boundary). Flagging every assert as a
+# security issue is noise for this codebase's specific design.
+skips = ["B101"]
+
+[tool.mockbuster]
+paths = ["tests"]

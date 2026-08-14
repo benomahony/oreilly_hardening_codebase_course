@@ -1,0 +1,74 @@
+# Technique 10: the pre-commit hook stack.
+#
+# Every hook here is a local hook running through `uv run` against the
+# project's own dependency group, rather than a pinned upstream
+# pre-commit-hooks repo — keeps every tool's version in lockstep with
+# pyproject.toml/uv.lock instead of two places to bump.
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format
+        language: system
+        types: [python]
+
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+
+      - id: basedpyright
+        name: basedpyright (type checking)
+        entry: uv run basedpyright
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: vulture
+        name: vulture (dead code)
+        entry: uv run vulture
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: bandit
+        name: bandit (security)
+        entry: uv run bandit -c pyproject.toml -r src
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: deptry
+        name: deptry (dependency audit)
+        entry: uv run deptry .
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: mockbuster
+        name: mockbuster (no unittest.mock in tests)
+        entry: uv run mockbuster --strict tests
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: cliqa
+        name: cliqa (CLI quality against clig.dev)
+        entry: uv run cliqa analyze chatops
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: nasa-lsp
+        name: nasa-lsp (NASA Power of 10 / NASA05 assertion density)
+        # Scoped to engines/ deliberately, not all of src/. Blanket-applying
+        # "≥2 asserts per function" to one-line Protocol stubs and thin CLI
+        # glue would mean padding trivial functions with assertions that
+        # can never fail — which Rule 5 itself calls out as a violation.
+        # engines/ is where technique 4 is actually meant to hold.
+        entry: uv run nasa lint src/oreilly_hardening_codebase_course/engines
+        language: system
+        pass_filenames: false
+        always_run: true
