@@ -1,0 +1,7 @@
+[tool.importlinter]
+root_package = "bad_reservations"
+
+[[tool.importlinter.contracts]]
+name = "Domain must not depend on infrastructure"
+type = "layers"
+layers = ["bad_reservations.infrastructure", "bad_reservations.domain"]

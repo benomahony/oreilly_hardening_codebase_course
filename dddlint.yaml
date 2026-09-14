@@ -1,0 +1,12 @@
+enforce_canonical: true
+name_uniqueness: true
+forbidden: [util, helper, manager]
+exclude: [tests, scripts, fuzz, examples, mutants, .venv]
+synonyms:
+  - canonical: reservation
+    aliases: [booking, allocation]
+  - canonical: stock
+    aliases: [inventory]
+contexts:
+  - name: reservations
+    include: ["src/reservations/**"]

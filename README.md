@@ -1,72 +1,60 @@
-# ChatOps: a worked example of hardening a codebase for agentic coding
+# Hardening a Python codebase
 
-A small, real command-parsing bot (`/task add`, `/task done <id>`, ...) —
-the running example for every technique in
-[Hardening Codebases for Agentic Coding](https://benomahony.com/blog/hardening-codebases-for-agentic-coding/).
-Its error messages are built on Google's
-[actionable Chat error messages](https://developers.google.com/workspace/chat/write-error-messages)
-guidance, with a hands-on exercise for it in `exercises/`.
+One tiny stock counter. Every quality gate demonstrated with a broken example
+and a checked solution. The application is three functions, about 40 executable
+lines: parse a bounded request, reserve units, and reserve a batch.
 
-## Python-specific tools, language-agnostic ideas
+## Start here
 
-Every tool named below is Python's implementation of a general idea. If
-you're hardening a codebase in another language, port the idea, not the
-tool:
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/), then:
 
-| Idea | This codebase's tool (Python) |
-|---|---|
-| Static type checking at boundaries | Pydantic |
-| Property-based fuzzing | Hypothesis |
-| Dead-code / import / dependency hygiene | vulture, deptry |
-| Assertion-density linting | nasa-lsp |
-| Mock-usage banning | mockbuster |
-| Format + lint | ruff |
-| Static type checker | basedpyright |
-| Security scanning | bandit |
-| CLI guideline checking | cliqa |
-
-## Quickstart
-
-```bash
-uv sync
-uv run pytest                      # 85 tests, ~95% coverage
-uv run chatops seed                # populate tasks.json with examples
-uv run chatops list
-uv run chatops handle "/task add Buy milk due 2026-08-20"
-uv run chatops parse "/task frobnicate"   # see an actionable error
-uv run pre-commit run --all-files  # the full static-analysis stack
+```sh
+uv sync --locked
+make check
+make demo
+make solutions
 ```
 
-## Technique → code map
+`check` proves the finished application passes. `demo` verifies the broken
+examples fail for the expected reason. `solutions` checks and runs the answers.
+No database, web server, credentials, or paid AI service is required.
 
-| Technique | Where |
-|---|---|
-| Actionable error messages (Google Chat guidance) | `commons/errors.py` |
-| Error collection pattern | `commons/errors.py::ErrorCollector` |
-| Type safety with Pydantic models | `commons/models.py` |
-| TypedDict for structured state (+ its tradeoff) | `commons/state.py` |
-| Protocol classes for DI | `commons/protocols.py` |
-| Defensive assertions (≥2 per function) | `engines/task_engine.py`, `engines/command_parser.py`, `engines/store.py` |
-| Property-based fuzzing (Hypothesis) | `tests/property/` |
-| Hypothesis testing profiles (`ci`/`dev`/`debug`/`fast`) | `tests/conftest.py` |
-| pytest-examples for doc testing | `tests/doc/test_docs.py` |
-| Architecture tests (AST-based) | `tests/architecture/test_layer_boundaries.py` |
-| Test markers (unit/integration/architecture/property/doc) | `pyproject.toml` `[tool.pytest.ini_options]` |
-| Pre-commit hook stack (ruff, basedpyright, vulture, bandit, deptry, mockbuster, cliqa, nasa-lsp) | `.pre-commit-config.yaml` |
-| Fakes instead of mocks | `tests/fakes.py` |
-| Modular layer architecture (`commons`/`engines`) | `src/oreilly_hardening_codebase_course/` |
-| Dependency injection | `engines/task_engine.py::TaskEngine.__init__` |
-| Contract specifications | `docs/contracts/task_command_contract.md` |
-| Executable runbooks | `docs/runbooks/recover_corrupted_store.md` |
-| Rich console logging | `cli.py` |
-| Structured metrics collection | `commons/metrics.py` |
-| CLI as a debug interface | `cli.py` (`parse`, `handle`, `list`, `seed`, `reset`) |
-| Configuration loading with schema validation | `commons/config.py` |
-| Coverage enforcement (80% floor) | `pyproject.toml` `[tool.coverage.report]` |
+**[Presenter walkthrough](docs/demo.md)** · **[Exercises](exercises/README.md)** ·
+**[Solutions](solutions/README.md)**
 
-## Findings and exercises
+## What is demonstrated
 
-Every technique has a real finding attached to it — a bug it caught, or a
-constructed-and-verified before/after. `docs/workshop.md` has all of them,
-each one reproducible yourself (break it, run the tool, observe, revert),
-starting with actionable error messages.
+| Topic | Tool | Focus |
+|---|---|---|
+| Formatting and linting | Ruff, all rules selected | Consistent code; zero findings |
+| Strict types | basedpyright `all`, mypy `strict` | No Any escapes; 100% known public types |
+| Defensive coding | NASA-LSP | All 12 shipped diagnostics; meaningful runtime assertions |
+| Domain language | dddlint | Forbidden names, canonical terms, duplicates |
+| Test quality | testdesiderata | All ten static categories; discussion of the two AI categories |
+| Mock detection | mockbuster `--strict` | Real behavior in tests |
+| Property-based testing | Hypothesis | Generated inputs, invariants, shrinking a real assertion failure |
+| Fuzzing | Portable corpus mutation; Atheris on Linux | Untrusted bytes; assertion failures remain visible |
+| Architecture tests | import-linter and pytest/grimp | Dependencies point toward the domain |
+| Documentation tests | pytest-examples | Execute code blocks and verify printed output |
+| Executable ADRs | pytest-examples | Architecture decisions expressed as tested examples |
+| Mutation testing | mutmut | Expose a missed boundary despite 100% coverage |
+
+## Individual lessons
+
+```sh
+uv run python -m scripts.demo NASA05-isinstance --verbose
+uv run python -m scripts.demo hypothesis --verbose
+make property
+make fuzz
+make mutation
+```
+
+All Python dependencies are locked in `uv.lock`; use Python 3.12, which uv installs
+if needed. The first dddlint run downloads its Python parser. The pinned Atheris
+wheel runs on Linux x86_64 via `make fuzz-atheris` and GitHub Actions; `make fuzz`
+works on macOS and Linux. The portable fuzzer is seeded mutation, not coverage-guided.
+
+Strict type checking and 100% type completeness measure static type coverage,
+not proof of runtime correctness. Boundary exceptions, assertions, and tests
+provide separate checks. See [scope and limits](docs/scope.md), including the
+original NASA rules and every intentional lint exception.
