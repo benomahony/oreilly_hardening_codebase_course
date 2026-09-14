@@ -1,4 +1,9 @@
-# Deliberately broken: lint this file; do not execute it.
+"""Run: uv run examples/nasa/NASA04.py
+
+Fix the function below until the NASA diagnostics disappear.
+Only the example above "# Tests" is analyzed; the test stays below it.
+"""
+
 def oversized_reservation(stock):
     stage_0 = stock + 0
     stage_1 = stock + 1
@@ -62,3 +67,20 @@ def oversized_reservation(stock):
     stage_59 = stock + 59
     stage_60 = stock + 60
     return stage_60
+
+
+# Tests
+from pathlib import Path
+
+import pytest
+from nasa_lsp.analyzer import analyze
+
+
+def test_example_satisfies_nasa_rules() -> None:
+    source = Path(__file__).read_text().split("\n# Tests\n")[0]
+    diagnostics, _ = analyze(source, Path(__file__))
+    assert not diagnostics, "\n".join(diagnostic.message for diagnostic in diagnostics)
+
+
+if __name__ == "__main__":
+    raise SystemExit(pytest.main([__file__, "-q", "-x", "--color=yes"]))

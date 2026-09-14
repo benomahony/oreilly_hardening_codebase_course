@@ -23,10 +23,12 @@ are active. Writable and Inspiring remain discussion topics; their optional AI
 review is outside the credential-free checks. Ask whether tests are easy to write,
 suggest useful cases, and survive harmless refactors.
 
-The deliberately broken snippets run directly through each tool, as shown in the
-[README](../README.md). Their failures are demonstrations, outside the passing CI
-checks. Compare the actual diagnostic with the lesson; an unrelated crash does
-not demonstrate the intended idea.
+The teaching files run their embedded pytest checks with `uv run FILE`, as shown
+in the [README](../README.md). Their failures are demonstrations, outside the
+passing application checks. The NASA, formatting, and test-quality lessons analyze
+the marked lesson section; the linting lesson selects `F`, `E`, `ANN`, `B`, and `D`.
+The finished application still uses the full strict configuration above. The
+checks expose actual diagnostics, and a corrected example exits successfully.
 
 ## All ten NASA rules, honestly mapped
 

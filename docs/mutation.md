@@ -4,16 +4,16 @@ The initial suite executed every production statement and branch, yet mutmut
 found a missed boundary: `reserve_batch(0, ())`. Changing `available >= 0` to
 `available > 0` survived because the empty-batch test only used positive stock.
 
-Run the reconstructed weak test:
+Run the self-contained example:
 
 ```sh
-uv run pytest examples/mutation/test_weak_suite.py::test_positive_stock_misses_the_boundary -q
-uv run pytest examples/mutation/test_weak_suite.py::test_zero_stock_exposes_the_survivor -q
+uv run examples/mutation/test_weak_suite.py
 ```
 
-The first test passes against the bad guard; the second exposes it. The regression
-in `tests/test_application.py::test_empty_batch_accepts_zero_stock` is the answer;
-mutmut checks the production implementation against that same test.
+It contains the bad guard and both tests. The positive-stock test passes; the
+zero-stock test fails. Change `available > 0` to `available >= 0` and rerun this
+same file: both tests pass. The completed application's equivalent regression is
+`tests/test_application.py::test_empty_batch_accepts_zero_stock`.
 
 ## Run the tool directly
 
