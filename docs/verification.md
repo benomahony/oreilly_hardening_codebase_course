@@ -1,29 +1,24 @@
-# Verified results
+# Verification
 
-Checked on 14 September 2026 with the committed lockfile, Python 3.12, and the
-commands shown in the README.
+Checked locally on macOS on 14 September 2026 with Python 3.12.1 and `uv.lock`.
+The course now uses native tool commands, with `make check` as its single shortcut.
 
-| Command / check | Result |
+| Check | Result |
 |---|---|
-| `make check` | Passed all formatting, linting, typing, NASA, DDD, test-quality, mock, architecture, and runtime-validation gates |
-| Main pytest suite | 64 passed |
+| `make check` | All formatting, linting, typing, NASA, DDD, test-quality, mock, architecture, and test checks passed |
+| Main pytest suite | 55 passed, including five executable documentation examples |
 | Production coverage | 100% statements and branches: 41 statements, 8 branches |
-| Public type completeness | 100%: 7 known exported symbols, none unknown or ambiguous |
-| `make demo` | 32 of 32 intended failure demonstrations verified |
-| `make solutions` | All solution checks passed; 15 selected tests passed |
-| `make fuzz` | 10,008 inputs; 236 accepted, 9,772 rejected; no crashes |
-| `make fuzz-atheris` on Linux CI | Passed strict type check and 10,000 coverage-guided inputs without a crash |
-| `make mutation` | 77 mutants: 64 killed, 13 individually reviewed equivalents; no missing tests or timeouts |
+| Public type completeness | 100%: 7 known exported symbols |
+| `uv run mutmut run` | 77 mutants: 64 killed, 13 survived |
 
-The raw mutation score is **83.1%**, not 100%. Twelve survivors change unreachable
-postcondition error text, and one relaxes a guard behind stricter input validation.
-See `mutation.md` and `mutation-survivors.tsv` for the review and the missing
-boundary test found during development.
+The eight removed test cases checked the old runner's answer-path map. The
+application tests, properties, and architecture tests remain in the suite.
 
-The Linux workflow passed the same course commands, an independent mutation job,
-and the optional Atheris smoke test in [this verified run](https://github.com/benomahony/oreilly_hardening_codebase_course/actions/runs/34837475755). Current run evidence is in
+The raw mutation score is **83.1%**. The prior equivalent-survivor reviews remain
+in [the mutation notes](mutation.md) and [review list](mutation-survivors.tsv).
+Review current survivors manually; no custom runner approves them automatically.
+
+CI runs `make check`. Failure demonstrations and mutation review are run directly
+using the [README commands](../README.md). The Linux workflow has not been rerun
+for these local changes; remote history is in
 [GitHub Actions](https://github.com/benomahony/oreilly_hardening_codebase_course/actions).
-
-Generated diagnostic logs live in `reports/demo/`; mutation statistics are in
-`mutants/mutmut-cicd-stats.json`. Both are CI artifacts and deliberately excluded
-from the source tree.

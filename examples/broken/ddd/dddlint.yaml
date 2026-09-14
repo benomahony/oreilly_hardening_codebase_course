@@ -1,6 +1,0 @@
-enforce_canonical: true
-name_uniqueness: true
-forbidden: [manager, helper, util]
-synonyms:
-  - canonical: reservation
-    aliases: [booking, allocation]

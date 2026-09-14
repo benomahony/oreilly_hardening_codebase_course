@@ -1,4 +1,4 @@
-name: Course quality gates
+name: Course checks
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 jobs:
-  course:
+  check:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -20,40 +20,3 @@ jobs:
           python-version: '3.12'
       - run: uv sync --locked
       - run: make check
-      - run: make demo
-      - run: make solutions
-      - run: make fuzz
-      - uses: actions/upload-artifact@v7.0.1
-        if: always()
-        with:
-          name: failure-demonstration-logs
-          path: reports/demo
-
-  mutation:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: astral-sh/setup-uv@v10.1.0
-        with:
-          enable-cache: true
-          python-version: '3.12'
-      - run: uv sync --locked
-      - run: make mutation
-      - uses: actions/upload-artifact@v7.0.1
-        if: always()
-        with:
-          name: mutation-results
-          path: mutants/mutmut-cicd-stats.json
-
-  atheris:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: astral-sh/setup-uv@v10.1.0
-        with:
-          enable-cache: true
-          python-version: '3.12'
-      - run: uv sync --locked --group fuzz
-      - run: make fuzz-atheris

@@ -1,7 +1,7 @@
 enforce_canonical: true
 name_uniqueness: true
 forbidden: [util, helper, manager]
-exclude: [tests, scripts, fuzz, examples, mutants, .venv]
+exclude: [tests, examples, mutants, .venv]
 synonyms:
   - canonical: reservation
     aliases: [booking, allocation]

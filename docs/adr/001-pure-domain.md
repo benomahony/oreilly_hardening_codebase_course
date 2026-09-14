@@ -8,7 +8,16 @@ domain free of framework dependencies. Consequence: a persistence adapter would
 still need its own concurrency and transaction guarantees. This demo has no database.
 
 This executable decision protects the observable failure behavior. The import
-contracts separately protect dependency direction.
+contracts separately protect dependency direction:
+
+```text
+infrastructure → application → domain
+```
+
+To fix the broken architecture example, remove the domain's infrastructure import.
+Keep orchestration in the application and input handling in infrastructure, as in
+`src/reservations/`. Run `uv run lint-imports` to check the direction; renaming a
+layer or disabling its contract does not repair the dependency.
 
 ```python
 from reservations.application.reservations import reserve_batch

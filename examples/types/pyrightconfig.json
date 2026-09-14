@@ -1,6 +1,6 @@
 {
   "include": ["violations.py"],
-  "extraPaths": ["../../../src"],
+  "extraPaths": ["../../src"],
   "typeCheckingMode": "all",
   "pythonVersion": "3.12"
 }

@@ -6,7 +6,7 @@ Context: callers control bytes, and Python annotations do not validate them.
 Decision: accept 1–32 quantities, each 1–9999, with a 159-byte ceiling. Reject
 bad input with explicit exceptions; use assertions for internal contracts.
 Consequence: validation still works with `python -O`; the defensive domain
-assertions require normal, unoptimized Python. CI checks both behaviors.
+assertions require normal, unoptimized Python.
 
 ```python
 from reservations.infrastructure.wire import parse_reservations

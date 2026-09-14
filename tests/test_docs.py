@@ -6,9 +6,7 @@ from pytest_examples import CodeExample, EvalExample, find_examples
 
 
 @pytest.mark.docs
-@pytest.mark.parametrize(
-    "example", list(find_examples("docs/usage.md", "docs/adr", "solutions/docs")), ids=str
-)
+@pytest.mark.parametrize("example", list(find_examples("docs/usage.md", "docs/adr")), ids=str)
 def test_documentation_and_decisions_remain_true(
     example: CodeExample, eval_example: EvalExample
 ) -> None:

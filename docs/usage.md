@@ -3,6 +3,16 @@
 The wire boundary accepts positive ASCII decimal quantities. The service then
 reserves them as a single pure calculation.
 
+A single reservation consumes exactly the requested quantity. This is the
+corrected output for the stale-documentation exercise.
+
+```python
+from reservations.domain.stock import reserve
+
+print(reserve(10, 3))
+#> 7
+```
+
 ```python
 from reservations.application.reservations import reserve_batch
 from reservations.infrastructure.wire import parse_reservations
