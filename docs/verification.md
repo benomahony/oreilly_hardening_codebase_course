@@ -12,6 +12,7 @@ commands shown in the README.
 | `make demo` | 32 of 32 intended failure demonstrations verified |
 | `make solutions` | All solution checks passed; 15 selected tests passed |
 | `make fuzz` | 10,008 inputs; 236 accepted, 9,772 rejected; no crashes |
+| `make fuzz-atheris` on Linux CI | Passed strict type check and 10,000 coverage-guided inputs without a crash |
 | `make mutation` | 77 mutants: 64 killed, 13 individually reviewed equivalents; no missing tests or timeouts |
 
 The raw mutation score is **83.1%**, not 100%. Twelve survivors change unreachable
@@ -19,8 +20,8 @@ postcondition error text, and one relaxes a guard behind stricter input validati
 See `mutation.md` and `mutation-survivors.tsv` for the review and the missing
 boundary test found during development.
 
-The Linux workflow runs the same course commands, an independent mutation job,
-and the optional Atheris smoke test. Current run evidence is in
+The Linux workflow passed the same course commands, an independent mutation job,
+and the optional Atheris smoke test in [this verified run](https://github.com/benomahony/oreilly_hardening_codebase_course/actions/runs/34837475755). Current run evidence is in
 [GitHub Actions](https://github.com/benomahony/oreilly_hardening_codebase_course/actions).
 
 Generated diagnostic logs live in `reports/demo/`; mutation statistics are in
