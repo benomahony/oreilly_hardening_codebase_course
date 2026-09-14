@@ -3,13 +3,13 @@
 The audience only needs to understand `10 - 3 = 7`. Show `src/reservations/domain/stock.py`
 first. The extra folders hold the lessons, not a larger application.
 
-## 1. Establish green (2 minutes)
+## 1. Establish green 
 
 Run `make check`. Show strict configuration in `pyproject.toml`: Ruff `ALL`,
 basedpyright `all`, mypy `strict`, warnings as errors, 100% branch coverage,
 and no disabled NASA or Test Desiderata rules.
 
-## 2. Show the static gates (5 minutes)
+## 2. Show the static gates 
 
 Run each scene with `uv run python -m scripts.demo NAME --verbose`:
 
@@ -26,14 +26,14 @@ Run each scene with `uv run python -m scripts.demo NAME --verbose`:
 Every NASA diagnostic has its own named scene. `make demo` runs them all and
 checks the exact diagnostic code, so a tool crash cannot masquerade as a success.
 
-## 3. Show test quality (3 minutes)
+## 3. Show test quality 
 
 Run `mocks`, `BHV001`, `STR001`, and `SPC003`. The mocked test invents the answer;
 the solution exercises the real request path and checks remaining stock. Each
 of the ten static Test Desiderata categories has a scene. The answers live in
 `solutions/test_desiderata.py` and `solutions/test_mock_free.py`.
 
-## 4. Generate a counterexample (3 minutes)
+## 4. Generate a counterexample 
 
 Run `hypothesis --verbose`. A deliberate `+ 1` bug trips the stock conservation
 assertion. Hypothesis shrinks the failure to one requested unit. Show the actual
@@ -44,7 +44,7 @@ states. Run `fuzz --verbose` to show bytes reaching a failing invariant, then
 `make fuzz` to exercise the corrected implementation with 10,008 inputs.
 `make fuzz-atheris` adds coverage guidance on Linux.
 
-## 5. Test architecture and the explanations (3 minutes)
+## 5. Test architecture and the explanations 
 
 Run `architecture --verbose`: an import from the domain to infrastructure violates
 the layer contract. `make architecture` checks the corrected source.
@@ -54,7 +54,7 @@ shows the actual seven. `make docs` checks the corrected example and executes bo
 ADRs in `docs/adr/` using that same library. These are living design decisions,
 not another documentation mechanism.
 
-## 6. Challenge the tests themselves (3 minutes)
+## 6. Challenge the tests themselves 
 
 Run `make mutation`. The first development run had full line and branch coverage
 but missed `reserve_batch(0, ())`. Mutmut changed `>= 0` to `> 0` and the mutation
