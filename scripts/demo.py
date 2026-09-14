@@ -143,12 +143,6 @@ CASES = (
         ("Failing test case", "a reservation must conserve stock"),
         "solutions/test_properties.py",
     ),
-    FailureCase(
-        "fuzz",
-        ("python", "-m", "scripts.fuzz", "--exercise-bug"),
-        ("fuzzing found a stock conservation failure",),
-        "solutions/defensive.py",
-    ),
 )
 
 

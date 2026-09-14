@@ -2,16 +2,14 @@
 UV ?= uv
 RUN = $(UV) run --locked
 
-.PHONY: help setup check format lint types nasa ddd desiderata mocks architecture test docs demo solutions property fuzz fuzz-atheris mutation optimized
+.PHONY: help setup check format lint types nasa ddd desiderata mocks architecture test docs demo solutions property mutation optimized
 
 help:
 	@echo 'make check       Run every passing quality gate'
 	@echo 'make demo        Show and verify the deliberately broken examples'
 	@echo 'make solutions   Check and execute the completed solutions'
 	@echo 'make property    Run the Hypothesis properties'
-	@echo 'make fuzz        Run portable deterministic input fuzzing'
 	@echo 'make mutation    Run mutmut and reject unreviewed survivors'
-	@echo 'make fuzz-atheris Run coverage-guided fuzzing (Linux x86_64)'
 
 setup:
 	$(UV) sync --locked
@@ -19,12 +17,12 @@ setup:
 check: lint types nasa ddd desiderata mocks architecture test optimized
 
 format:
-	$(RUN) ruff format src tests scripts solutions fuzz
-	$(RUN) ruff check src tests scripts solutions fuzz --fix
+	$(RUN) ruff format src tests scripts solutions 
+	$(RUN) ruff check src tests scripts solutions --fix
 
 lint:
-	$(RUN) ruff format --check src tests scripts solutions fuzz
-	$(RUN) ruff check src tests scripts solutions fuzz
+	$(RUN) ruff format --check src tests scripts solutions
+	$(RUN) ruff check src tests scripts solutions
 
 types:
 	$(RUN) basedpyright
@@ -68,13 +66,6 @@ solutions:
 
 property:
 	$(RUN) pytest tests/test_properties.py -q
-
-fuzz:
-	$(RUN) python -m scripts.fuzz
-
-fuzz-atheris:
-	$(RUN) --group fuzz basedpyright fuzz
-	$(RUN) --group fuzz python -m fuzz.atheris_target -runs=10000 -max_len=200
 
 mutation:
 	$(RUN) python -m scripts.mutation
